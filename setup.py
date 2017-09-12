@@ -5,16 +5,17 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+from os.path import basename, dirname, join, splitext
 from setuptools import setup, find_packages
-# To use a consistent encoding
-from codecs import open
-from os import path
-
-here = path.abspath(path.dirname(__file__))
+import glob
+import io
 
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+def read(*names, **kwargs):
+    return io.open(
+        join(dirname(__file__), *names),
+        encoding=kwargs.get("encoding", "utf8")
+    ).read()
 
 setup(
     name='project',
@@ -25,7 +26,7 @@ setup(
     version='0.0.0',
 
     description='A sample Python project',
-    long_description=long_description,
+    long_description=read('README.md'),
 
     # The project's main homepage.
     url='https://github.com/pypa/sampleproject',
@@ -64,7 +65,9 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['data','docs', 'tests']),
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(i))[0] for i in glob.glob("src/*.py")],
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
